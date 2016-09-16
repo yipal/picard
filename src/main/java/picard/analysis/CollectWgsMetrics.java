@@ -575,6 +575,7 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
 
         protected final long[] depthHistogramArray;
         private   final long[] baseQHistogramArray;
+        private final List<long[]> baseQHistograms;
 
         private long basesExcludedByBaseq = 0;
         private long basesExcludedByOverlap = 0;
@@ -585,6 +586,12 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
         public WgsMetricsCollector(final int coverageCap, final IntervalList intervals) {
             depthHistogramArray = new long[coverageCap + 1];
             baseQHistogramArray = new long[Byte.MAX_VALUE];
+
+            baseQHistograms     = new ArrayList<>();
+            for(int i=0; i<30; i++){
+                baseQHistograms.add(i, baseQHistogramArray);
+            }
+
             this.coverageCap    = coverageCap;
             this.intervals      = intervals;
         }
@@ -603,6 +610,9 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
                 pileupSize++;
                 if (pileupSize <= coverageCap) {
                     baseQHistogramArray[recs.getRecord().getBaseQualities()[recs.getOffset()]]++;
+                    if(pileupSize<30){
+                        baseQHistograms.get(pileupSize)[recs.getRecord().getBaseQualities()[recs.getOffset()]]++;
+                    }
                 }
             }
 
@@ -625,6 +635,11 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
 
         protected void addBaseQHistogram(final MetricsFile<WgsMetrics, Integer> file) {
             file.addHistogram(getBaseQHistogram());
+
+            List<Histogram<Integer>> histograms = getBaseQHistograms();
+            for(int i=0; i<histograms.size(); i++){
+                file.addHistogram(histograms.get(i));
+            }
         }
 
         protected void addMetricsToFile(final MetricsFile<WgsMetrics, Integer> file,
@@ -646,6 +661,14 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
 
         protected Histogram<Integer> getBaseQHistogram() {
             return getHistogram(baseQHistogramArray, "value", "baseq_count");
+        }
+
+        protected List<Histogram<Integer>> getBaseQHistograms() {
+            List<Histogram<Integer>> histograms = new ArrayList<>();
+            for(int i = 0; i<baseQHistograms.size(); i++){
+                histograms.add(i, getHistogram(baseQHistograms.get(i), "value", i+"X_baseq_count"));
+            }
+            return histograms;
         }
 
         private Histogram<Integer> getHistogram(final long[] array, final String binLabel, final String valueLabel) {
