@@ -46,9 +46,7 @@ import picard.filter.CountingPairedFilter;
 import picard.util.MathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static picard.cmdline.StandardOptionDefinitions.MINIMUM_MAPPING_QUALITY_SHORT_NAME;
 
@@ -575,7 +573,7 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
 
         protected final long[] depthHistogramArray;
         private   final long[] baseQHistogramArray;
-        private final List<long[]> baseQHistograms;
+        private Map<Integer, long[]> baseQHistograms;
 
         private long basesExcludedByBaseq = 0;
         private long basesExcludedByOverlap = 0;
@@ -587,9 +585,10 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
             depthHistogramArray = new long[coverageCap + 1];
             baseQHistogramArray = new long[Byte.MAX_VALUE];
 
-            baseQHistograms     = new ArrayList<>();
-            for(int i=0; i<30; i++){
-                baseQHistograms.add(i, baseQHistogramArray);
+            baseQHistograms = new HashMap<>();
+
+            for(Integer i=0; i<30; i++){
+                baseQHistograms.put(i, new long[65]);
             }
 
             this.coverageCap    = coverageCap;
@@ -601,6 +600,7 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
             // Figure out the coverage while not counting overlapping reads twice, and excluding various things
             final HashSet<String> readNames = new HashSet<>(info.getRecordAndPositions().size());
             int pileupSize = 0;
+            long[] localBaseQHistogram = new long[65];
             for (final SamLocusIterator.RecordAndOffset recs : info.getRecordAndPositions()) {
 
                 if (recs.getBaseQuality() < MINIMUM_BASE_QUALITY ||
@@ -610,9 +610,12 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
                 pileupSize++;
                 if (pileupSize <= coverageCap) {
                     baseQHistogramArray[recs.getRecord().getBaseQualities()[recs.getOffset()]]++;
-                    if(pileupSize<30){
-                        baseQHistograms.get(pileupSize)[recs.getRecord().getBaseQualities()[recs.getOffset()]]++;
-                    }
+                    localBaseQHistogram[recs.getRecord().getBaseQualities()[recs.getOffset()]]++;
+                }
+            }
+            if(pileupSize>0 && pileupSize<31){
+                for(int i=0; i<localBaseQHistogram.length; i++){
+                    baseQHistograms.get(pileupSize-1)[i]+=localBaseQHistogram[i];
                 }
             }
 
@@ -666,7 +669,7 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
         protected List<Histogram<Integer>> getBaseQHistograms() {
             List<Histogram<Integer>> histograms = new ArrayList<>();
             for(int i = 0; i<baseQHistograms.size(); i++){
-                histograms.add(i, getHistogram(baseQHistograms.get(i), "value", i+"X_baseq_count"));
+                histograms.add(i, getHistogram(baseQHistograms.get(i), "value", (i+1)+"X_baseq_count"));
             }
             return histograms;
         }
