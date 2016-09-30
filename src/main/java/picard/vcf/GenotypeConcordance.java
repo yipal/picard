@@ -150,6 +150,7 @@ public class GenotypeConcordance extends CommandLineProgram {
             "This flag can only be used with a high confidence interval list.")
     public boolean MISSING_SITES_HOM_REF = false;
 
+    @Option(doc="Ignores filters")
     public boolean IGNORE_FILTERING = false;
 
     private final Log log = Log.getInstance(GenotypeConcordance.class);
