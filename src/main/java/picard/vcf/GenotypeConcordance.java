@@ -150,6 +150,8 @@ public class GenotypeConcordance extends CommandLineProgram {
             "This flag can only be used with a high confidence interval list.")
     public boolean MISSING_SITES_HOM_REF = false;
 
+    public boolean IGNORE_FILTERING = false;
+
     private final Log log = Log.getInstance(GenotypeConcordance.class);
     private final ProgressLogger progress = new ProgressLogger(log, 10000, "checked", "variants");
 
@@ -293,7 +295,7 @@ public class GenotypeConcordance extends CommandLineProgram {
             final boolean stateClassified = classifyVariants(tuple.leftVariantContext, TRUTH_SAMPLE,
                     tuple.rightVariantContext, CALL_SAMPLE,
                     Optional.of(snpCounter), Optional.of(indelCounter),
-                    MIN_GQ, MIN_DP);
+                    MIN_GQ, MIN_DP, IGNORE_FILTERING);
 
             if (!stateClassified) {
                 final String condition = truthVariantContextType + " " + callVariantContextType;
@@ -348,8 +350,8 @@ public class GenotypeConcordance extends CommandLineProgram {
                                            final String truthSample,
                                            final Optional<VariantContext> callContext,
                                            final String callSample,
-                                           final int minGq, final int minDp) {
-        return classifyVariants(truthContext, truthSample, callContext, callSample, Optional.empty(), Optional.empty(), minGq, minDp);
+                                           final int minGq, final int minDp, final boolean ignoreFilters) {
+        return classifyVariants(truthContext, truthSample, callContext, callSample, Optional.empty(), Optional.empty(), minGq, minDp, ignoreFilters);
     }
 
     /**
@@ -373,13 +375,13 @@ public class GenotypeConcordance extends CommandLineProgram {
                                            final String callSample,
                                            final Optional<GenotypeConcordanceCounts> snpCounter,
                                            final Optional<GenotypeConcordanceCounts> indelCounter,
-                                           final int minGq, final int minDp) {
+                                           final int minGq, final int minDp, final boolean ignoreFilters) {
         final VariantContext.Type truthVariantContextType = truthContext.map(VariantContext::getType).orElse(NO_VARIATION);
         final VariantContext.Type callVariantContextType  = callContext.map(VariantContext::getType).orElse(NO_VARIATION);
 
         // A flag to keep track of whether we have been able to successfully classify the Truth/Call States.
         // Unclassified include MIXED/MNP/Symbolic...
-        final TruthAndCallStates truthAndCallStates = determineState(truthContext.orElse(null), truthSample, callContext.orElse(null), callSample, minGq, minDp);
+        final TruthAndCallStates truthAndCallStates = determineState(truthContext.orElse(null), truthSample, callContext.orElse(null), callSample, minGq, minDp, ignoreFilters);
         if (truthVariantContextType == SNP) {
             if ((callVariantContextType == SNP) || (callVariantContextType == MIXED) || (callVariantContextType == NO_VARIATION)) {
                 // Note.  If truth is SNP and call is MIXED, the event will be logged in the snpCounter, with row = MIXED
@@ -474,7 +476,7 @@ public class GenotypeConcordance extends CommandLineProgram {
      * @param minDp Threshold for filtering by genotype attribute DP
      * @return TruthAndCallStates object containing the TruthState and CallState determined here.
      */
-    final public static TruthAndCallStates determineState(final VariantContext truthContext, final String truthSample, final VariantContext callContext, final String callSample, final int minGq, final int minDp) {
+    final public static TruthAndCallStates determineState(final VariantContext truthContext, final String truthSample, final VariantContext callContext, final String callSample, final int minGq, final int minDp, final boolean ignoreFiltering) {
         TruthState truthState = null;
         CallState callState = null;
 
@@ -486,12 +488,12 @@ public class GenotypeConcordance extends CommandLineProgram {
         // Added potential to include missing sites as hom ref..
         if (truthContext == null) truthState = TruthState.MISSING;
         else if (truthContext.isMixed()) truthState = TruthState.IS_MIXED;
-        else if (truthContext.isFiltered()) truthState = TruthState.VC_FILTERED;
+        else if (truthContext.isFiltered() && !ignoreFiltering) truthState = TruthState.VC_FILTERED;
         else {
             // Genotype level checks
             truthGenotype = truthContext.getGenotype(truthSample);
             if (truthGenotype.isNoCall())           truthState = TruthState.NO_CALL;
-            else if (truthGenotype.isFiltered())    truthState = TruthState.GT_FILTERED;
+            else if (truthGenotype.isFiltered() && !ignoreFiltering)    truthState = TruthState.GT_FILTERED;
             else if ((truthGenotype.getGQ() != -1) && (truthGenotype.getGQ() < minGq)) truthState = TruthState.LOW_GQ;
             else if ((truthGenotype.getDP() != -1) && (truthGenotype.getDP() < minDp)) truthState = TruthState.LOW_DP;
             // Note.  Genotype.isMixed means that it is called on one chromosome and NOT on the other
@@ -501,12 +503,12 @@ public class GenotypeConcordance extends CommandLineProgram {
         // Site level checks
         if (callContext == null) callState = CallState.MISSING;
         else if (callContext.isMixed()) callState = CallState.IS_MIXED;
-        else if (callContext.isFiltered()) callState = CallState.VC_FILTERED;
+        else if (callContext.isFiltered() && !ignoreFiltering) callState = CallState.VC_FILTERED;
         else {
             // Genotype level checks
             callGenotype = callContext.getGenotype(callSample);
             if (callGenotype.isNoCall())           callState = CallState.NO_CALL;
-            else if (callGenotype.isFiltered())    callState = CallState.GT_FILTERED;
+            else if (callGenotype.isFiltered() && !ignoreFiltering)    callState = CallState.GT_FILTERED;
             else if ((callGenotype.getGQ() != -1) && (callGenotype.getGQ() < minGq)) callState = CallState.LOW_GQ;
             else if ((callGenotype.getDP() != -1) && (callGenotype.getDP() < minDp)) callState = CallState.LOW_DP;
                 // Note.  Genotype.isMixed means that it is called on one chromosome and NOT on the other
