@@ -489,12 +489,12 @@ public class GenotypeConcordance extends CommandLineProgram {
         // Added potential to include missing sites as hom ref..
         if (truthContext == null) truthState = TruthState.MISSING;
         else if (truthContext.isMixed()) truthState = TruthState.IS_MIXED;
-        else if (truthContext.isFiltered() && !ignoreFiltering) truthState = TruthState.VC_FILTERED;
+        else if (truthContext.isFiltered()) truthState = TruthState.VC_FILTERED;
         else {
             // Genotype level checks
             truthGenotype = truthContext.getGenotype(truthSample);
             if (truthGenotype.isNoCall())           truthState = TruthState.NO_CALL;
-            else if (truthGenotype.isFiltered() && !ignoreFiltering)    truthState = TruthState.GT_FILTERED;
+            else if (truthGenotype.isFiltered())    truthState = TruthState.GT_FILTERED;
             else if ((truthGenotype.getGQ() != -1) && (truthGenotype.getGQ() < minGq)) truthState = TruthState.LOW_GQ;
             else if ((truthGenotype.getDP() != -1) && (truthGenotype.getDP() < minDp)) truthState = TruthState.LOW_DP;
             // Note.  Genotype.isMixed means that it is called on one chromosome and NOT on the other
