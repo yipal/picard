@@ -228,35 +228,4 @@ public class TheoreticalSensitivityTest {
         final double result = TheoreticalSensitivity.hetSNPSensitivity(depthDistribution, qualityDistribution, sampleSize, logOddsThreshold);
         Assert.assertEquals(result, expected, tolerance);
     }
-
-
-    @Test
-    public void testAllBQTest() throws Exception {
-        final File wgsMetricsFile = new File(TEST_DIR, "Solexa-294475.NIST.hets.AllBq.wgs_metrics");
-        final MetricsFile Metrics = new MetricsFile();
-        Metrics.read(new FileReader(wgsMetricsFile));
-        final List<Histogram> histograms = Metrics.getAllHistograms();
-        final int sampleSize = 10000;
-        final double logOddsThreshold = 3.0;
-
-        final List<Double> results = new ArrayList();
-        final Histogram depth = histograms.get(0);
-
-        for(int i=2; i<32; i++){
-            final Histogram bQ = histograms.get(i);
-            final double[] specificArray = new double[40];
-            final double x = depth.get(i-2).getValue();
-            specificArray[i-1] = x;
-            final Histogram<Integer> histogram = new Histogram<>("depth"+i, "baseQ");
-            for (int j = 0; j < specificArray.length; ++j) {
-                histogram.increment(j, specificArray[j]);
-            }
-
-            final double [] depthDistribution = TheoreticalSensitivity.normalizeHistogram(histogram);
-            final double [] qualityDistribution = TheoreticalSensitivity.normalizeHistogram(bQ);
-            final double result = TheoreticalSensitivity.hetSNPSensitivity(depthDistribution, qualityDistribution, sampleSize, logOddsThreshold);
-            results.add(result);
-        }
-        Assert.assertEquals(results, 1);
-    }
 }
