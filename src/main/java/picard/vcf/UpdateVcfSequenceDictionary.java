@@ -59,7 +59,7 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
      @Option(shortName = StandardOptionDefinitions.INPUT_SHORT_NAME, doc = "Input VCF")
     public File INPUT;
 
-    @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "Output VCF to be written.")
+    @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "Output VCF to be written to a file or stdout")
     public File OUTPUT;
 
     @Option(shortName = StandardOptionDefinitions.SEQUENCE_DICTIONARY_SHORT_NAME, doc = "A Sequence Dictionary (can be read from one of the " +
@@ -67,6 +67,8 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
     public File SEQUENCE_DICTIONARY;
 
     private final Log log = Log.getInstance(UpdateVcfSequenceDictionary.class);
+
+    private static final String STD_OUT = "stdout";
 
     public static void main(final String[] args) {
         new UpdateVcfSequenceDictionary().instanceMainWithExit(args);
@@ -89,7 +91,15 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
         if (CREATE_INDEX)
             builder.setOption(Options.INDEX_ON_THE_FLY);
 
-        final VariantContextWriter vcfWriter = builder.setOutputFile(OUTPUT).build();
+        // handle stdout
+        if ( OUTPUT.getPath().equals(STD_OUT) ) {
+            builder.setOutputStream(System.out);
+        }
+        else {
+            builder.setOutputFile(OUTPUT);
+        }
+
+        final VariantContextWriter vcfWriter = builder.build();
         fileHeader.setSequenceDictionary(samSequenceDictionary);
         vcfWriter.writeHeader(fileHeader);
 

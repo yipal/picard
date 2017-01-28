@@ -28,8 +28,13 @@ import htsjdk.variant.utils.SAMSequenceDictionaryExtractor;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+import org.testng.annotations.DataProvider;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  * @author George Grant
@@ -37,29 +42,47 @@ import java.io.File;
 public class UpdateVcfSequenceDictionaryTest {
     private static final File TEST_DATA_PATH = new File("testdata/picard/vcf/");
     private static final File OUTPUT_DATA_PATH = IOUtil.createTempDir("UpdateVcfSequenceDictionaryTest", null);
+    private static final File STD_OUT_FILE = new File(OUTPUT_DATA_PATH, "stdout.vcf");
 
     @AfterClass
     public void teardown() {
         IOUtil.deleteDirectoryTree(OUTPUT_DATA_PATH);
     }
 
-    @Test
-    public void testUpdateVcfSequenceDictionary() {
+    @DataProvider(name = "OutputFiles")
+    public static Object[][] outputFies() {
+
+        return new Object[][] {
+                {OUTPUT_DATA_PATH + "updateVcfSequenceDictionaryTest-delete-me.vcf"},
+                {"stdout"}
+        };
+    }
+
+    @Test(dataProvider = "OutputFiles")
+    public void testUpdateVcfSequenceDictionary(final String outputFileName) throws FileNotFoundException {
         final File input = new File(TEST_DATA_PATH, "vcfFormatTest.vcf");
         // vcfFormatTest.bad_dict.vcf is a vcf with two (2) ##contig lines deleted
         final File samSequenceDictionaryVcf = new File(TEST_DATA_PATH, "vcfFormatTest.bad_dict.vcf");
-        final File outputFile = new File(OUTPUT_DATA_PATH, "updateVcfSequenceDictionaryTest-delete-me.vcf");
-
-        outputFile.deleteOnExit();
+        File outputFile = new File(outputFileName);
 
         final UpdateVcfSequenceDictionary updateVcfSequenceDictionary = new UpdateVcfSequenceDictionary();
         updateVcfSequenceDictionary.INPUT = input;
         updateVcfSequenceDictionary.SEQUENCE_DICTIONARY = samSequenceDictionaryVcf;
         updateVcfSequenceDictionary.OUTPUT = outputFile;
 
+        // Reassign the standard output to a file
+        if ( outputFileName.equals("stdout") ) {
+            System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(STD_OUT_FILE))));
+        }
+
         Assert.assertEquals(updateVcfSequenceDictionary.instanceMain(new String[0]), 0);
 
-        IOUtil.assertFilesEqual(samSequenceDictionaryVcf, outputFile);
+        if ( outputFileName.equals("stdout") ) {
+            outputFile = STD_OUT_FILE;
+        }
+        outputFile.deleteOnExit();
+
+        IOUtil.assertFilesEqual(samSequenceDictionaryVcf, outputFile);;
 
         // A little extra checking.
         Assert.assertEquals(SAMSequenceDictionaryExtractor.extractDictionary(input).size(), 84);
