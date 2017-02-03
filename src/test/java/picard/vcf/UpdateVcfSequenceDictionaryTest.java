@@ -40,7 +40,7 @@ import java.io.PrintStream;
 public class UpdateVcfSequenceDictionaryTest {
     private static final File TEST_DATA_PATH = new File("testdata/picard/vcf/");
     private static final File OUTPUT_DATA_PATH = IOUtil.createTempDir("UpdateVcfSequenceDictionaryTest", null);
-    private static final String STD_OUT_FILE_NAME = OUTPUT_DATA_PATH + "/stdout.vcf";
+    private static final File STD_OUT_FILE = new File(OUTPUT_DATA_PATH, "stdout.vcf");
 
     @AfterClass
     public void teardown() {
@@ -52,7 +52,7 @@ public class UpdateVcfSequenceDictionaryTest {
 
         return new Object[][] {
                 {OUTPUT_DATA_PATH + "updateVcfSequenceDictionaryTest-delete-me.vcf"},
-                {STD_OUT_FILE_NAME}
+                {UpdateVcfSequenceDictionary.STD_OUT}
         };
     }
 
@@ -64,9 +64,9 @@ public class UpdateVcfSequenceDictionaryTest {
         File outputFile = new File(outputFileName);
         outputFile.deleteOnExit();
 
-        // Reassign the standard output to an ooutput stream file
-        if ( outputFileName.equals(STD_OUT_FILE_NAME) ) {
-            System.setOut(new PrintStream(STD_OUT_FILE_NAME));
+        // Stream standard output a file
+        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
+            System.setOut(new PrintStream(STD_OUT_FILE));
         }
 
         final UpdateVcfSequenceDictionary updateVcfSequenceDictionary = new UpdateVcfSequenceDictionary();
@@ -75,6 +75,10 @@ public class UpdateVcfSequenceDictionaryTest {
         updateVcfSequenceDictionary.OUTPUT = outputFile;
 
         Assert.assertEquals(updateVcfSequenceDictionary.instanceMain(new String[0]), 0);
+
+        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
+            outputFile = STD_OUT_FILE;
+        }
 
         IOUtil.assertFilesEqual(samSequenceDictionaryVcf, outputFile);
 
