@@ -56,10 +56,10 @@ import java.io.File;
         programGroup = VcfOrBcf.class
 )
 public class UpdateVcfSequenceDictionary extends CommandLineProgram {
-     @Option(shortName = StandardOptionDefinitions.INPUT_SHORT_NAME, doc = "Input VCF")
+    @Option(shortName = StandardOptionDefinitions.INPUT_SHORT_NAME, doc = "Input VCF")
     public File INPUT;
 
-    @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "Output VCF to be written to a file or stdout")
+    @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "Output VCF to be written to a file")
     public File OUTPUT;
 
     @Option(shortName = StandardOptionDefinitions.SEQUENCE_DICTIONARY_SHORT_NAME, doc = "A Sequence Dictionary (can be read from one of the " +
@@ -68,7 +68,7 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
 
     private final Log log = Log.getInstance(UpdateVcfSequenceDictionary.class);
 
-    private static final String STD_OUT = "stdout";
+    static final String STD_OUT = "/dev/stdout";
 
     public static void main(final String[] args) {
         new UpdateVcfSequenceDictionary().instanceMainWithExit(args);

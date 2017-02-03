@@ -54,7 +54,7 @@ public class UpdateVcfSequenceDictionaryTest {
 
         return new Object[][] {
                 {OUTPUT_DATA_PATH + "updateVcfSequenceDictionaryTest-delete-me.vcf"},
-                {"stdout"}
+                {UpdateVcfSequenceDictionary.STD_OUT}
         };
     }
 
@@ -71,13 +71,13 @@ public class UpdateVcfSequenceDictionaryTest {
         updateVcfSequenceDictionary.OUTPUT = outputFile;
 
         // Reassign the standard output to a file
-        if ( outputFileName.equals("stdout") ) {
-            System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(STD_OUT_FILE))));
+        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
+            System.setOut(new PrintStream(STD_OUT_FILE));
         }
 
         Assert.assertEquals(updateVcfSequenceDictionary.instanceMain(new String[0]), 0);
 
-        if ( outputFileName.equals("stdout") ) {
+        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
             outputFile = STD_OUT_FILE;
         }
         outputFile.deleteOnExit();
