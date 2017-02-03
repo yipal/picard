@@ -30,10 +30,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -65,8 +63,8 @@ public class UpdateVcfSequenceDictionaryTest {
         final File samSequenceDictionaryVcf = new File(TEST_DATA_PATH, "vcfFormatTest.bad_dict.vcf");
         File outputFile = new File(outputFileName);
         outputFile.deleteOnExit();
-        
-        // Reassign the standard output to a file
+
+        // Reassign the standard output to an ooutput stream file
         if ( outputFileName.equals(STD_OUT_FILE_NAME) ) {
             System.setOut(new PrintStream(STD_OUT_FILE_NAME));
         }
