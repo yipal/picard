@@ -68,7 +68,7 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
 
     private final Log log = Log.getInstance(UpdateVcfSequenceDictionary.class);
 
-    static final String STD_OUT = "/dev/stdout";
+    private static final String STD_OUT = "/dev/stdout";
 
     public static void main(final String[] args) {
         new UpdateVcfSequenceDictionary().instanceMainWithExit(args);
