@@ -43,6 +43,8 @@ import picard.cmdline.StandardOptionDefinitions;
 import picard.cmdline.programgroups.VcfOrBcf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * Takes a VCF file and a Sequence Dictionary (from a variety of file types) and updates the Sequence Dictionary in VCF.
@@ -68,7 +70,7 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
 
     private final Log log = Log.getInstance(UpdateVcfSequenceDictionary.class);
 
-    static final String STD_OUT = "/dev/stdout";
+  //  static final String STD_OUT = "/dev/stdout";
 
     public static void main(final String[] args) {
         new UpdateVcfSequenceDictionary().instanceMainWithExit(args);
@@ -92,12 +94,21 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
             builder.setOption(Options.INDEX_ON_THE_FLY);
 
         // handle stdout
-        if ( OUTPUT.getPath().equals(STD_OUT) ) {
-            builder.setOutputStream(System.out);
-        }
-        else {
+        if(OUTPUT.isFile()) {
             builder.setOutputFile(OUTPUT);
+        } else {
+            try {
+                builder.setOutputStream(new FileOutputStream(OUTPUT));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+//        if ( OUTPUT.getPath().equals(STD_OUT) ) {
+//            builder.setOutputStream(System.out);
+//        }
+//        else {
+//
+//        }
 
         final VariantContextWriter vcfWriter = builder.build();
         fileHeader.setSequenceDictionary(samSequenceDictionary);

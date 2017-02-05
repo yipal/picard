@@ -30,9 +30,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import java.io.*;
+import java.lang.reflect.Field;
 
 /**
  * @author George Grant
@@ -41,6 +40,7 @@ public class UpdateVcfSequenceDictionaryTest {
     private static final File TEST_DATA_PATH = new File("testdata/picard/vcf/");
     private static final File OUTPUT_DATA_PATH = IOUtil.createTempDir("UpdateVcfSequenceDictionaryTest", null);
     private static final File STD_OUT_FILE = new File(OUTPUT_DATA_PATH, "stdout.vcf");
+    private static final String STD_OUT_NAME = "/dev/stdout";
 
     @AfterClass
     public void teardown() {
@@ -50,33 +50,44 @@ public class UpdateVcfSequenceDictionaryTest {
     @DataProvider(name = "OutputFiles")
     public static Object[][] outputFies() {
 
-        return new Object[][] {
+        return new Object[][]{
                 {OUTPUT_DATA_PATH + "updateVcfSequenceDictionaryTest-delete-me.vcf"},
-                {UpdateVcfSequenceDictionary.STD_OUT}
+                {STD_OUT_NAME}
         };
     }
 
     @Test(dataProvider = "OutputFiles")
-    public void testUpdateVcfSequenceDictionary(final String outputFileName) throws FileNotFoundException {
+    public void testUpdateVcfSequenceDictionary(final String outputFileName) throws IOException, NoSuchFieldException, IllegalAccessException {
         final File input = new File(TEST_DATA_PATH, "vcfFormatTest.vcf");
         // vcfFormatTest.bad_dict.vcf is a vcf with two (2) ##contig lines deleted
         final File samSequenceDictionaryVcf = new File(TEST_DATA_PATH, "vcfFormatTest.bad_dict.vcf");
         File outputFile = new File(outputFileName);
         outputFile.deleteOnExit();
 
-        // Stream standard output a file
-        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
-            System.setOut(new PrintStream(STD_OUT_FILE));
+        final UpdateVcfSequenceDictionary updateVcfSequenceDictionary = new UpdateVcfSequenceDictionary();
+
+        if (outputFileName.equals(STD_OUT_NAME)) {
+
+            final FileOutputStream stream = new FileOutputStream(STD_OUT_FILE);
+
+            // Ugliness required to read from a stream given as a string on the commandline.
+            // Since the actual fd number is private inside FileDescriptor, need reflection
+            // in order to pull it out.
+
+            final Field fdField = FileDescriptor.class.getDeclaredField("fd");
+            fdField.setAccessible(true);
+            updateVcfSequenceDictionary.OUTPUT = new File("/dev/fd/" + fdField.getInt(stream.getFD()));
+
+        } else {
+            updateVcfSequenceDictionary.OUTPUT = outputFile;
         }
 
-        final UpdateVcfSequenceDictionary updateVcfSequenceDictionary = new UpdateVcfSequenceDictionary();
         updateVcfSequenceDictionary.INPUT = input;
         updateVcfSequenceDictionary.SEQUENCE_DICTIONARY = samSequenceDictionaryVcf;
-        updateVcfSequenceDictionary.OUTPUT = outputFile;
 
         Assert.assertEquals(updateVcfSequenceDictionary.instanceMain(new String[0]), 0);
 
-        if ( outputFileName.equals(UpdateVcfSequenceDictionary.STD_OUT) ) {
+        if (outputFileName.equals(STD_OUT_NAME)) {
             outputFile = STD_OUT_FILE;
         }
 
