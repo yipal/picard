@@ -67,7 +67,7 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
         this.doRefMetrics         = doRefMetrics;
         this.adapterUtility       = new AdapterUtility(adapterSequence);
         this.maxInsertSize        = maxInsertSize;
-        this.expectedOrientations  = expectedOrientations;
+        this.expectedOrientations = expectedOrientations;
         this.isBisulfiteSequenced = isBisulfiteSequenced;
         setup(accumulationLevels, samRgRecords);
     }
@@ -110,14 +110,12 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
             if (rec.getReadPairedFlag()) {
                 if (rec.getFirstOfPairFlag()) {
                     firstOfPairCollector.addRecord(rec, ref);
-                }
-                else {
+                } else {
                     secondOfPairCollector.addRecord(rec, ref);
                 }
 
                 pairCollector.addRecord(rec, ref);
-            }
-            else {
+            } else {
                 unpairedCollector.addRecord(rec, ref);
             }
         }
@@ -155,7 +153,7 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
          */
         private class IndividualAlignmentSummaryMetricsCollector {
             private long numPositiveStrand = 0;
-            private final Histogram<Integer> readLengthHistogram = new Histogram<Integer>();
+            private final Histogram<Integer> readLengthHistogram = new Histogram<>();
             private AlignmentSummaryMetrics metrics;
             private long chimeras;
             private long chimerasDenominator;
@@ -164,9 +162,9 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
 
             private long nonBisulfiteAlignedBases = 0;
             private long hqNonBisulfiteAlignedBases = 0;
-            private final Histogram<Long> mismatchHistogram = new Histogram<Long>();
-            private final Histogram<Long> hqMismatchHistogram = new Histogram<Long>();
-            private final Histogram<Integer> badCycleHistogram = new Histogram<Integer>();
+            private final Histogram<Long> mismatchHistogram = new Histogram<>();
+            private final Histogram<Long> hqMismatchHistogram = new Histogram<>();
+            private final Histogram<Integer> badCycleHistogram = new Histogram<>();
 
             public IndividualAlignmentSummaryMetricsCollector(final AlignmentSummaryMetrics.Category pairingCategory,
                                                               final String sample,
@@ -201,7 +199,7 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
                     metrics.BAD_CYCLES = 0;
                     for (final Histogram.Bin<Integer> cycleBin : badCycleHistogram.values()) {
                         final double badCyclePercentage = cycleBin.getValue() / metrics.TOTAL_READS;
-                        if (badCyclePercentage >= .8) {
+                        if (badCyclePercentage >= 0.8) {
                             metrics.BAD_CYCLES++;
                         }
                     }
@@ -240,8 +238,7 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
                         if (adapterUtility.isAdapterSequence(readBases)) {
                             this.adapterReads++;
                         }
-                    }
-                    else if(doRefMetrics) {
+                    } else if(doRefMetrics) {
                         metrics.PF_READS_ALIGNED++;
                         if (record.getProperPairFlag()) metrics.PF_READS_IN_PROPER_PAIRS++;
                         if (!record.getReadNegativeStrandFlag()) numPositiveStrand++;
@@ -258,8 +255,7 @@ public class AlignmentSummaryMetricsCollector extends SAMRecordAndReferenceMulti
                                     ++this.chimeras;
                                 }
                             }
-                        }
-                        else { // fragment reads or read pairs with one end that maps
+                        } else { // fragment reads or read pairs with one end that maps
                             // Consider chimeras that occur *within* the read using the SA tag
                             if (record.getMappingQuality() >= MAPPING_QUALITY_THRESOLD) {
                                 ++this.chimerasDenominator;

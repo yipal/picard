@@ -126,7 +126,7 @@ public class CollectAlignmentSummaryMetricsTest extends CommandLineProgramTest {
         final NumberFormat format =  NumberFormat.getInstance();
         format.setMaximumFractionDigits(4);
 
-        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<AlignmentSummaryMetrics, Comparable<?>>();
+        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<>();
         output.read(new FileReader(outfile));
 
         for (final AlignmentSummaryMetrics metrics : output.getMetrics()) {
@@ -183,7 +183,7 @@ public class CollectAlignmentSummaryMetricsTest extends CommandLineProgramTest {
         };
         Assert.assertEquals(runPicardCommandLine(args), 0);
 
-        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<AlignmentSummaryMetrics, Comparable<?>>();
+        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<>();
         output.read(new FileReader(outfile));
 
         for (final AlignmentSummaryMetrics metrics : output.getMetrics()) {
@@ -240,7 +240,7 @@ public class CollectAlignmentSummaryMetricsTest extends CommandLineProgramTest {
         };
         Assert.assertEquals(runPicardCommandLine(args), 0);
 
-        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<AlignmentSummaryMetrics, Comparable<?>>();
+        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<>();
         output.read(new FileReader(outfile));
         for (final AlignmentSummaryMetrics metrics : output.getMetrics()) {
             // test that it doesn't blow up
@@ -262,7 +262,7 @@ public class CollectAlignmentSummaryMetricsTest extends CommandLineProgramTest {
         };
         Assert.assertEquals(runPicardCommandLine(args), 0);
 
-        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<AlignmentSummaryMetrics, Comparable<?>>();
+        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<>();
         output.read(new FileReader(outfile));
 
         for (final AlignmentSummaryMetrics metrics : output.getMetrics()) {
@@ -523,7 +523,7 @@ public class CollectAlignmentSummaryMetricsTest extends CommandLineProgramTest {
         };
         Assert.assertEquals(runPicardCommandLine(args), 0);
 
-        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<AlignmentSummaryMetrics, Comparable<?>>();
+        final MetricsFile<AlignmentSummaryMetrics, Comparable<?>> output = new MetricsFile<>();
         output.read(new FileReader(outfile));
 
         for (final AlignmentSummaryMetrics metrics : output.getMetrics()) {
