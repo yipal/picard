@@ -137,6 +137,17 @@ public class AlignmentSummaryMetrics extends MultilevelMetrics {
     public double PCT_READS_ALIGNED_IN_PAIRS;
 
     /**
+     * The number of (primary) aligned reads that are "properly" aligned in pairs (as per SAM flag 0x2).
+     */
+    public long PF_READS_IN_PROPER_PAIRS;
+
+    /**
+     * The percentage of (primary) reads that are "properly" aligned in pairs (as per SAM flag 0x2).
+     * PF_READS_IN_PROPER_PAIRS / PF_READS_ALIGNED
+     */
+    public double PCT_READS_IN_PROPER_PAIRS;
+
+    /**
      * The number of instrument cycles in which 80% or more of base calls were no-calls.
      */
     public long BAD_CYCLES;
