@@ -61,7 +61,7 @@ public abstract class AbstractAlignmentMerger {
 
     private static final char[] RESERVED_ATTRIBUTE_STARTS = {'X', 'Y', 'Z'};
     private int crossSpeciesReads = 0;
-    static private final String CROSS_SPECIES_CONTAMINATION_TEXT = "Cross-species contamination";
+    static final String CROSS_SPECIES_CONTAMINATION_TEXT = "Cross-species contamination";
 
     private final Log log = Log.getInstance(AbstractAlignmentMerger.class);
     private final ProgressLogger progress = new ProgressLogger(this.log, 1000000, "Merged", "records");
