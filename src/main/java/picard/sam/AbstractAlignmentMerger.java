@@ -61,7 +61,7 @@ public abstract class AbstractAlignmentMerger {
 
     private static final char[] RESERVED_ATTRIBUTE_STARTS = {'X', 'Y', 'Z'};
     private int crossSpeciesReads = 0;
-    private final String CROSS_SPECIES_CONTAMINATION_TEXT = "Cross-species contamination";
+    static private final String CROSS_SPECIES_CONTAMINATION_TEXT = "Cross-species contamination";
 
     private final Log log = Log.getInstance(AbstractAlignmentMerger.class);
     private final ProgressLogger progress = new ProgressLogger(this.log, 1000000, "Merged", "records");
@@ -611,9 +611,25 @@ public abstract class AbstractAlignmentMerger {
      * @param aligned   Holds alignment info that will be copied into unaligned.
      * @param isContaminant Should this read be unmapped due to contamination?
      */
-    private void transferAlignmentInfoToFragment(final SAMRecord unaligned, final SAMRecord aligned, final boolean isContaminant, final boolean needsSafeReverseComplement) {
-        setValuesFromAlignment(unaligned, aligned, needsSafeReverseComplement);
-        updateCigarForTrimmedOrClippedBases(unaligned, aligned);
+    protected void transferAlignmentInfoToFragment(final SAMRecord unaligned, final SAMRecord aligned, final boolean isContaminant, final boolean needsSafeReverseComplement) {
+        crossSpeciesReads += actuallyTransferAlignmentInfoToFragment(unaligned, aligned, isContaminant, needsSafeReverseComplement,
+                attributesToRetain, attributesToRemove, attributesToReverseComplement, attributesToReverse,
+                clipAdapters, read1BasesTrimmed, read2BasesTrimmed,
+                unmappingReadsStrategy, log);
+    }
+
+    static protected int actuallyTransferAlignmentInfoToFragment(final SAMRecord unaligned, final SAMRecord aligned, final boolean isContaminant, final boolean needsSafeReverseComplement,
+                                                          final List<String> attributesToRetain, final List<String> attributesToRemove,
+                                                          final Set<String> attributesToReverseComplement, Set<String> attributesToReverse,
+                                                                  final Boolean clipAdapters, final Integer read1BasesTrimmed, final Integer read2BasesTrimmed ,
+                                                                 final UnmappingReadStrategy unmappingReadsStrategy, final Log log) {
+        setValuesFromAlignment(unaligned, aligned, needsSafeReverseComplement,
+                attributesToRetain, attributesToRemove,
+                attributesToReverseComplement, attributesToReverse);
+        updateCigarForTrimmedOrClippedBases(unaligned, aligned,
+                clipAdapters, read1BasesTrimmed, read2BasesTrimmed);
+
+        int crossSpeciesReads=0;
         if (SAMUtils.cigarMapsNoBasesToRef(unaligned.getCigar())) {
             log.warn("Record contains no unclipped bases; making unmapped: " + aligned);
             SAMUtils.makeReadUnmapped(unaligned);
@@ -642,9 +658,12 @@ public abstract class AbstractAlignmentMerger {
 
             // if there already is a comment, add second comment with a | separator:
             Optional<String> optionalComment = Optional.ofNullable(unaligned.getStringAttribute(SAMTag.CO.name()));
-            unaligned.setAttribute(SAMTag.CO.name(),
-                    optionalComment.map(s -> s + " | ").orElse("") + CROSS_SPECIES_CONTAMINATION_TEXT);
+            unaligned.setAttribute(SAMTag.CO.name(), optionalComment
+                    .filter(s->!s.equals(CROSS_SPECIES_CONTAMINATION_TEXT))
+                    .map(s -> s + " | ").orElse("") + "Cross-species contamination");
         }
+
+        return crossSpeciesReads;
     }
 
     /**
@@ -749,10 +768,12 @@ public abstract class AbstractAlignmentMerger {
      * @param rec       The unaligned read record
      * @param alignment The alignment record
      */
-    protected void setValuesFromAlignment(final SAMRecord rec, final SAMRecord alignment, final boolean needsSafeReverseComplement) {
+    static protected void setValuesFromAlignment(final SAMRecord rec, final SAMRecord alignment, final boolean needsSafeReverseComplement,
+                                                 final List<String> attributesToRetain, final List<String> attributesToRemove,
+                                                 final Set<String> attributesToReverseComplement, Set<String> attributesToReverse) {
         for (final SAMRecord.SAMTagAndValue attr : alignment.getAttributes()) {
             // Copy over any non-reserved attributes.  attributesToRemove overrides attributesToRetain.
-            if ((!isReservedTag(attr.tag) || this.attributesToRetain.contains(attr.tag)) && !this.attributesToRemove.contains(attr.tag)) {
+            if ((!isReservedTag(attr.tag) || attributesToRetain.contains(attr.tag)) && !attributesToRemove.contains(attr.tag)) {
                 rec.setAttribute(attr.tag, attr.value);
             }
         }
@@ -838,13 +859,13 @@ public abstract class AbstractAlignmentMerger {
         }
     }
 
-    protected void updateCigarForTrimmedOrClippedBases(final SAMRecord rec, final SAMRecord alignment) {
+    static protected void updateCigarForTrimmedOrClippedBases(final SAMRecord rec, final SAMRecord alignment, final Boolean clipAdapters, final Integer read1BasesTrimmed, final Integer read2BasesTrimmed) {
         // If the read was trimmed or not all the bases were sent for alignment, clip it
         final int alignmentReadLength = alignment.getReadLength();
         final int originalReadLength = rec.getReadLength();
         final int trimmed = (!rec.getReadPairedFlag()) || rec.getFirstOfPairFlag()
-                ? this.read1BasesTrimmed != null ? this.read1BasesTrimmed : 0
-                : this.read2BasesTrimmed != null ? this.read2BasesTrimmed : 0;
+                ? read1BasesTrimmed != null ? read1BasesTrimmed : 0
+                : read2BasesTrimmed != null ? read2BasesTrimmed : 0;
         final int notWritten = originalReadLength - (alignmentReadLength + trimmed);
 
         // Update cigar if the mate maps off the reference
@@ -854,7 +875,7 @@ public abstract class AbstractAlignmentMerger {
                 rec.getCigar(), rec.getReadNegativeStrandFlag(), notWritten, trimmed));
 
         // If the adapter sequence is marked and clipAdapter is true, clip it
-        if (this.clipAdapters && rec.getAttribute(ReservedTagConstants.XT) != null) {
+        if (clipAdapters && rec.getAttribute(ReservedTagConstants.XT) != null) {
             CigarUtil.softClip3PrimeEndOfRead(rec, rec.getIntegerAttribute(ReservedTagConstants.XT));
             removeNmMdAndUqTags(rec); // these tags are now invalid!
         }
@@ -871,7 +892,7 @@ public abstract class AbstractAlignmentMerger {
         SAMUtils.chainSAMProgramRecord(header, pg);
     }
 
-    protected boolean isReservedTag(final String tag) {
+    static protected boolean isReservedTag(final String tag) {
         final char firstCharOfTag = tag.charAt(0);
 
         // All tags that start with a lower-case letter are user defined and should not be overridden by aligner
