@@ -61,6 +61,7 @@ public abstract class AbstractAlignmentMerger {
 
     private static final char[] RESERVED_ATTRIBUTE_STARTS = {'X', 'Y', 'Z'};
     private int crossSpeciesReads = 0;
+    private final String CROSS_SPECIES_CONTAMINATION_TEXT = "Cross-species contamination";
 
     private final Log log = Log.getInstance(AbstractAlignmentMerger.class);
     private final ProgressLogger progress = new ProgressLogger(this.log, 1000000, "Merged", "records");
@@ -641,8 +642,8 @@ public abstract class AbstractAlignmentMerger {
 
             // if there already is a comment, add second comment with a | separator:
             Optional<String> optionalComment = Optional.ofNullable(unaligned.getStringAttribute(SAMTag.CO.name()));
-            unaligned.setAttribute(optionalComment.map(s -> s + " | ").orElse("") +
-                    SAMTag.CO.name(), "Cross-species contamination");
+            unaligned.setAttribute(SAMTag.CO.name(),
+                    optionalComment.map(s -> s + " | ").orElse("") + CROSS_SPECIES_CONTAMINATION_TEXT);
         }
     }
 
