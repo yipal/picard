@@ -213,11 +213,6 @@ public class CollectOxoGMetrics extends CommandLineProgram {
         public double G_REF_OXO_Q;
     }
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new CollectOxoGMetrics().instanceMainWithExit(args);
-    }
-
     @Override
     protected String[] customCommandLineValidation() {
         final int size = 1 + 2 * CONTEXT_SIZE;

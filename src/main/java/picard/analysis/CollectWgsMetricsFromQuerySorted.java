@@ -136,11 +136,7 @@ public class CollectWgsMetricsFromQuerySorted extends CommandLineProgram {
         double insertSizeSum = 0.0;
     }
 
-    public static void main(final String[] args) {
-        new CollectWgsMetricsFromQuerySorted().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsWritable(OUTPUT);

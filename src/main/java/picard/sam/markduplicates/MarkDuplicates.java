@@ -199,11 +199,6 @@ public class MarkDuplicates extends AbstractMarkDuplicatesCommandLineProgram {
         DUPLICATE_SCORING_STRATEGY = ScoringStrategy.SUM_OF_BASE_QUALITIES;
     }
 
-    /** Stock main method. */
-    public static void main(final String[] args) {
-        new MarkDuplicates().instanceMainWithExit(args);
-    }
-
     /**
      * Main work method.  Reads the BAM file once and collects sorted information about
      * the 5' ends of both ends of each read (or just one end in the case of pairs).

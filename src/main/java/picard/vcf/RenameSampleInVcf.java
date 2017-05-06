@@ -73,11 +73,7 @@ public class RenameSampleInVcf extends CommandLineProgram {
     public String NEW_SAMPLE_NAME;
 
 
-    public static void main(final String[] args) {
-        new RenameSampleInVcf().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsWritable(OUTPUT);

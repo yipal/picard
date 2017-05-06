@@ -54,11 +54,7 @@ public class NormalizeFasta extends CommandLineProgram {
 
     private final Log log = Log.getInstance(NormalizeFasta.class);
 
-    public static void main(final String[] args) {
-        new NormalizeFasta().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsWritable(OUTPUT);

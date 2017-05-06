@@ -27,11 +27,7 @@ public class CheckTerminatorBlock extends CommandLineProgram {
     @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The block compressed file to check.")
     public File INPUT;
 
-    public static void main(final String[] args) {
-        new CheckTerminatorBlock().instanceMainWithExit(args);
-    }
-
-    @Override protected int doWork() {
+        @Override protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         try {
             final FileTermination term = BlockCompressedInputStream.checkTermination(INPUT);

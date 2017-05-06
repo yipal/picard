@@ -81,11 +81,7 @@ public class ExtractSequences extends CommandLineProgram {
     @Option(doc="Maximum line length for sequence data.")
     public int LINE_LENGTH = 80;
 
-    public static void main(final String[] args) {
-        new ExtractSequences().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INTERVAL_LIST);
         IOUtil.assertFileIsReadable(REFERENCE_SEQUENCE);

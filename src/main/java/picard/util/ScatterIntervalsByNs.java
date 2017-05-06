@@ -92,11 +92,7 @@ public class ScatterIntervalsByNs extends CommandLineProgram {
     private static final ProgressLogger locusProgress = new ProgressLogger(log, (int) 1e7, "examined", "loci");
     private static final ProgressLogger intervalProgress = new ProgressLogger(log, (int) 10, "found", "intervals");
 
-    public static void main(final String[] args) {
-        new ScatterIntervalsByNs().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(REFERENCE);
         IOUtil.assertFileIsWritable(OUTPUT);

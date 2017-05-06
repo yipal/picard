@@ -137,11 +137,7 @@ public class PositionBasedDownsampleSam extends CommandLineProgram {
     final Map<Short, Histogram<Short>> xPositions = new HashMap<Short, Histogram<Short>>();
     final Map<Short, Histogram<Short>> yPositions = new HashMap<Short, Histogram<Short>>();
 
-    public static void main(final String[] args) {
-        new PositionBasedDownsampleSam().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected String[] customCommandLineValidation() {
         final List<String> errors = new ArrayList<String>();
 

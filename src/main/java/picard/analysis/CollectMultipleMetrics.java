@@ -369,11 +369,6 @@ public class CollectMultipleMetrics extends CommandLineProgram {
 
     private static final Log log = Log.getInstance(CollectMultipleMetrics.class);
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new CollectMultipleMetrics().instanceMainWithExit(args);
-    }
-
     @Override
     protected String[] customCommandLineValidation() {
         if (PROGRAM.isEmpty()) {

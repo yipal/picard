@@ -70,11 +70,6 @@ import java.util.Set;
 public class SimpleMarkDuplicatesWithMateCigar extends MarkDuplicates {
     private final Log log = Log.getInstance(MarkDuplicatesWithMateCigar.class);
 
-    /** Stock main method. */
-    public static void main(final String[] args) {
-        new MarkDuplicatesWithMateCigar().instanceMainWithExit(args);
-    }
-
     private class ReadEndsForSimpleMarkDuplicatesWithMateCigar extends ReadEnds {
     }
     

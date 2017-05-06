@@ -71,11 +71,7 @@ public class UpdateVcfSequenceDictionary extends CommandLineProgram {
 
     private final Log log = Log.getInstance(UpdateVcfSequenceDictionary.class);
 
-    public static void main(final String[] args) {
-        new UpdateVcfSequenceDictionary().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsReadable(SEQUENCE_DICTIONARY);

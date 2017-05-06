@@ -121,11 +121,6 @@ public class CheckFingerprint extends CommandLineProgram {
     public static final String FINGERPRINT_DETAIL_FILE_SUFFIX = "fingerprinting_detail_metrics";
 
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new CheckFingerprint().instanceMainWithExit(args);
-    }
-
     @Override
     protected int doWork() {
         final File outputDetailMetricsFile, outputSummaryMetricsFile;

@@ -116,11 +116,6 @@ public class CrosscheckReadGroupFingerprints extends CommandLineProgram {
     public static final String UNEXPECTED_MATCH = "UNEXPECTED MATCH";
     public static final String UNEXPECTED_MISMATCH = "UNEXPECTED MISMATCH";
 
-    /** Stock main method. */
-    public static void main(final String[] args) {
-        new CrosscheckReadGroupFingerprints().instanceMainWithExit(args);
-    }
-
     @Override protected int doWork() {
         // Check inputs
         for (final File f : INPUT) IOUtil.assertFileIsReadable(f);

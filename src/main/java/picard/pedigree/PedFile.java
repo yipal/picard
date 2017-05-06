@@ -7,9 +7,7 @@ import htsjdk.samtools.util.RuntimeIOException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -52,9 +50,9 @@ public class PedFile extends TreeMap<String, PedFile.PedTrio> {
                 out.write("\t");
                 out.write(trio.getIndividualId());
                 out.write("\t");
-                out.write(trio.getPaternalId());
+                out.write(Optional.ofNullable(trio.getPaternalId()).orElse("-9"));
                 out.write("\t");
-                out.write(trio.getMaternalId());
+                out.write(Optional.ofNullable(trio.getMaternalId()).orElse("-9"));
                 out.write("\t");
                 out.write(String.valueOf(trio.getSex().toCode()));
                 out.write("\t");
@@ -121,8 +119,8 @@ public class PedFile extends TreeMap<String, PedFile.PedTrio> {
         public PedTrio(final String familyId, final String individualId, final String paternalId, final String maternalId, final Sex sex, final Number phenotype) {
             if (delimiterPattern.split(familyId).length != 1)     throw new IllegalArgumentException("FamilyID     cannot contain " + delimiterString + ": [" + familyId     + "]");
             if (delimiterPattern.split(individualId).length != 1) throw new IllegalArgumentException("IndividualID cannot contain " + delimiterString + ": [" + individualId + "]");
-            if (delimiterPattern.split(paternalId).length != 1)   throw new IllegalArgumentException("PaternalID   cannot contain " + delimiterString + ": [" + paternalId   + "]");
-            if (delimiterPattern.split(maternalId).length != 1)   throw new IllegalArgumentException("MaternalID   cannot contain " + delimiterString + ": [" + maternalId   + "]");
+            if (paternalId != null && delimiterPattern.split(paternalId).length != 1) throw new IllegalArgumentException("PaternalID   cannot contain " + delimiterString + ": [" + paternalId   + "]");
+            if (maternalId != null && delimiterPattern.split(maternalId).length != 1) throw new IllegalArgumentException("MaternalID   cannot contain " + delimiterString + ": [" + maternalId   + "]");
 
             this.familyId = familyId;
             this.individualId = individualId;

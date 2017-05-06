@@ -172,11 +172,6 @@ public class RevertSam extends CommandLineProgram {
 
     private final static Log log = Log.getInstance(RevertSam.class);
 
-    /** Default main method impl. */
-    public static void main(final String[] args) {
-        new RevertSam().instanceMainWithExit(args);
-    }
-
     /**
      * Enforce that output ordering is queryname when sanitization is turned on since it requires a queryname sort.
      */

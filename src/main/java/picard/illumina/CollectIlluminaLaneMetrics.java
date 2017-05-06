@@ -122,11 +122,7 @@ public class CollectIlluminaLaneMetrics extends CommandLineProgram {
         return 0;
     }
 
-    public static void main(final String[] args) {
-        new CollectIlluminaLaneMetrics().instanceMainWithExit(args);
-    }
-
-    /**
+        /**
      * Utility for collating Tile records from the Illumina TileMetrics file into lane-level and phasing-level metrics.
      */
     public static class IlluminaLaneMetricsCollector {

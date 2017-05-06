@@ -59,11 +59,7 @@ public class CollectWgsMetricsFromSampledSites extends CollectWgsMetrics {
     @Option(doc = "An interval list file that contains the locations of the positions to assess.", optional = false)
     public File INTERVALS = null;
 
-    public static void main(final String[] args) {
-        new CollectWgsMetricsFromSampledSites().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected SamLocusIterator getLocusIterator(final SamReader in) {
         IOUtil.assertFileIsReadable(INTERVALS);
         return new SamLocusIterator(in, IntervalList.fromFile(INTERVALS));

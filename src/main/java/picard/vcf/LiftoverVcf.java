@@ -134,11 +134,6 @@ public class LiftoverVcf extends CommandLineProgram {
 
     private final Log log = Log.getInstance(LiftoverVcf.class);
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new LiftoverVcf().instanceMainWithExit(args);
-    }
-
     @Override protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsReadable(REFERENCE_SEQUENCE);

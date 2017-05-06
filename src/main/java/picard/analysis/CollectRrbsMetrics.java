@@ -127,10 +127,6 @@ private static final String R_SCRIPT = "picard/analysis/rrbsQc.R";
 
     private static final Log log = Log.getInstance(CollectRrbsMetrics.class);
 
-    public static void main(final String[] args) {
-        new CollectRrbsMetrics().instanceMainWithExit(args);
-    }
-
     @Override
     protected int doWork() {
         if (!METRICS_FILE_PREFIX.endsWith(".")) {

@@ -59,11 +59,6 @@ static final String USAGE_DETAILS = "<p>This tool extracts 8-oxoguanine (OxoG) a
             optional = true)
     public File OUTPUT_BASE;
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new ConvertSequencingArtifactToOxoG().instanceMainWithExit(args);
-    }
-
     @Override
     protected int doWork() {
         if (OUTPUT_BASE == null) { OUTPUT_BASE = INPUT_BASE; }

@@ -165,11 +165,6 @@ public class IntervalListTools extends CommandLineProgram {
 
     }
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new IntervalListTools().instanceMainWithExit(args);
-    }
-
     @Override
     protected int doWork() {
         // Check inputs

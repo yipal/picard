@@ -39,11 +39,7 @@ public class CalculateReadGroupChecksum extends CommandLineProgram {
     @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "The file to which the hash code should be written.", optional = true)
     public File OUTPUT;
 
-    public static void main(final String[] args) {
-        new CalculateReadGroupChecksum().instanceMainWithExit(args);
-    }
-
-    /**
+        /**
      * Creates a file name (not including the path) for an RG MD5 file based on the name of the input file.
      */
     public static String getOutputFileName(final File inputFile) {

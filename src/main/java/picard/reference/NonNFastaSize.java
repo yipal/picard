@@ -76,11 +76,7 @@ public class NonNFastaSize extends CommandLineProgram {
     @Option(shortName = "INTERVALS", doc = "An interval list file that contains the locations of the positions to assess.  If not provided, the entire reference will be used", optional = true)
     public File INTERVALS = null;
 
-    public static void main(final String[] args) {
-        new NonNFastaSize().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsWritable(OUTPUT);

@@ -48,11 +48,6 @@ public class MakeSitesOnlyVcf extends CommandLineProgram {
     @Option(shortName="S", doc="Optionally one or more samples to retain when building the 'sites-only' VCF.", optional=true)
     public Set<String> SAMPLE = new TreeSet<String>();
 
-    // Stock main method
-    public static void main(final String[] args) {
-        new MakeSitesOnlyVcf().instanceMainWithExit(args);
-    }
-
 	public MakeSitesOnlyVcf() {
 		CREATE_INDEX = true;
 	}

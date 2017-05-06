@@ -412,11 +412,7 @@ static final String USAGE_DETAILS = "<p>This tool collects metrics about the fra
         }
     }
 
-    public static void main(final String[] args) {
-        new CollectWgsMetrics().instanceMainWithExit(args);
-    }
-
-    /** Gets the SamReader from which records will be examined.  This will also set the header so that it is available in
+        /** Gets the SamReader from which records will be examined.  This will also set the header so that it is available in
      *  */
     protected SamReader getSamReader() {
         final SamReader in = SamReaderFactory.makeDefault().referenceSequence(REFERENCE_SEQUENCE).open(INPUT);

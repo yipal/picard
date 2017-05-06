@@ -107,11 +107,7 @@ public class FixMateInformation extends CommandLineProgram {
 
     protected SAMFileWriter out;
 
-    public static void main(final String[] args) {
-        new FixMateInformation().instanceMainWithExit(args);
-    }
-
-    protected int doWork() {
+        protected int doWork() {
         // Open up the input
         boolean allQueryNameSorted = true;
         final List<SamReader> readers = new ArrayList<SamReader>();

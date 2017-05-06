@@ -102,11 +102,7 @@ public class DownsampleSam extends CommandLineProgram {
 
     private final Log log = Log.getInstance(DownsampleSam.class);
 
-    public static void main(final String[] args) {
-        new DownsampleSam().instanceMainWithExit(args);
-    }
-
-    @Override
+        @Override
     protected int doWork() {
         IOUtil.assertFileIsReadable(INPUT);
         IOUtil.assertFileIsWritable(OUTPUT);
