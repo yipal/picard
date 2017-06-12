@@ -652,12 +652,13 @@ public abstract class AbstractAlignmentMerger {
      * (Might make sense to move this to htsJDK.)
      *
      * @param rec SAMRecord whose alignment information will be encoded
-     * @return String encoding rec's alignment information according to SA tag in the SAM spec
+     * @return String encoding rec's alignment information according to SA tag in the SAM spec (rname,pos,strand,CIGAR,mapQ,NM)
      */
     static private String encodeMappingInformation(SAMRecord rec) {
         return String.join(",",
                 rec.getContig(),
                 ((Integer) rec.getAlignmentStart()).toString(),
+                rec.getReadNegativeStrandFlag()?"-":"+",
                 rec.getCigarString(),
                 ((Integer) rec.getMappingQuality()).toString(),
                 getStringOfNullable(rec.getIntegerAttribute(SAMTag.NM.name()))) + ";";
