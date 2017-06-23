@@ -686,6 +686,8 @@ public class MarkDuplicates extends AbstractMarkDuplicatesCommandLineProgram {
                 if (nextChunk.size() > 1) {
                     markDuplicatePairs(nextChunk);
                     if (TAG_DUPLICATE_SET_MEMBERS) addRepresentativeReadIndex(nextChunk);
+                } else if (nextChunk.size() ==1) {
+                    AbstractMarkDuplicatesCommandLineProgram.addSingletonToCount(libraryIdGenerator);
                 }
                 nextChunk.clear();
                 nextChunk.add(next);
@@ -695,6 +697,8 @@ public class MarkDuplicates extends AbstractMarkDuplicatesCommandLineProgram {
         if (nextChunk.size() > 1) {
             markDuplicatePairs(nextChunk);
             if (TAG_DUPLICATE_SET_MEMBERS) addRepresentativeReadIndex(nextChunk);
+        }  else if (nextChunk.size() ==1) {
+            AbstractMarkDuplicatesCommandLineProgram.addSingletonToCount(libraryIdGenerator);
         }
         this.pairSort.cleanup();
         this.pairSort = null;
