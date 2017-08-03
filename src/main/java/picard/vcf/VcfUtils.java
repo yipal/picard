@@ -1,5 +1,6 @@
 package picard.vcf;
 
+import htsjdk.samtools.util.IOUtil;
 import java.io.File;
 
 /**
@@ -7,9 +8,9 @@ import java.io.File;
  */
 public class VcfUtils {
 
-    static String UNCOMPRESSED_VCF_ENDING = ".vcf";
-    static String COMPRESSED_VCF_ENDING = ".vcf.gz";
-    static String BCF_ENDING = ".bcf";
+    public static String UNCOMPRESSED_VCF_ENDING = IOUtil.VCF_FILE_EXTENSION;
+    public static String COMPRESSED_VCF_ENDING = IOUtil.COMPRESSED_VCF_FILE_EXTENSION;
+    public static String BCF_ENDING = IOUtil.BCF_FILE_EXTENSION;
 
     /**
      * Checks if the suffix is one of those that are allowed for the various

@@ -37,6 +37,7 @@ import picard.cmdline.CommandLineProgramProperties;
 import picard.cmdline.Option;
 import picard.cmdline.StandardOptionDefinitions;
 import picard.cmdline.programgroups.VcfOrBcf;
+import picard.vcf.VcfUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class FilterVcf extends CommandLineProgram {
 
     private boolean isVcfOrBcf(final File file) {
         final String fileName = file.getName();
-        return fileName.endsWith(".vcf") || fileName.endsWith(".bcf");
+        return fileName.endsWith(VcfUtils.UNCOMPRESSED_VCF_ENDING) || fileName.endsWith(VcfUtils.BCF_ENDING);
     }
     
     /** Javascript filter implementing VariantFilter */
