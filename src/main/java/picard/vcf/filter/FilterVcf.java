@@ -37,7 +37,6 @@ import picard.cmdline.CommandLineProgramProperties;
 import picard.cmdline.Option;
 import picard.cmdline.StandardOptionDefinitions;
 import picard.cmdline.programgroups.VcfOrBcf;
-import picard.vcf.VcfUtils;
 
 import java.io.File;
 import java.io.IOException;

@@ -49,7 +49,6 @@ import picard.cmdline.Option;
 import picard.cmdline.StandardOptionDefinitions;
 import picard.cmdline.programgroups.VcfOrBcf;
 import picard.pedigree.PedFile;
-import picard.vcf.VcfUtils;
 import picard.vcf.processor.VariantProcessor;
 
 import java.io.File;
